@@ -106,32 +106,36 @@ function initAutocomplete() {
     });
     map.fitBounds(bounds);
   });
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      
+      infoWindow.setPosition(pos);
+      infoWindow.setContent("Your Location");
+      infoWindow.open(map);
+      map.setCenter(pos);
+      startLatitude = (pos.lat);        
+      startLongitude = (pos.lng);
+    }, function() {
+      handleLocationError(true, infoWindow, map.getCenter());
+    });
+    
+  } 
+  
+  else {
+  // Browser doesn’t support Geolocation
+  handleLocationError(false, infoWindow, map.getCenter());
+  }
 }
 
 // Try HTML5 geolocation.
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function(position) {
-    pos = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude
-    };
-    
-    infoWindow.setPosition(pos);
-    infoWindow.setContent("Your Location");
-    infoWindow.open(map);
-    map.setCenter(pos);
-    startLatitude = (pos.lat);        
-    startLongitude = (pos.lng);
-  }, function() {
-    handleLocationError(true, infoWindow, map.getCenter());
-  });
+//google.maps.event.addListenerOnce(map, 'idle', function() {
   
-} 
+//})
 
-else {
-// Browser doesn’t support Geolocation
-handleLocationError(false, infoWindow, map.getCenter());
-}
 
 
 
@@ -149,6 +153,7 @@ handleLocationError(false, infoWindow, map.getCenter());
 
 //Calling the function when uber button is clicked
 $(document).ready(function() {
+  initAutocomplete();
   
   $("#uberBtn").click(function(e) {
     e.preventDefault();
