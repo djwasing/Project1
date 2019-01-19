@@ -115,13 +115,13 @@ function initAutocomplete() {
     function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       var selectedMode = "DRIVING";
       directionsService.route({
-        origin: {lat: startLatitude, lng: startLongitude},  // Current location
-        destination: {lat: endLatitude, lng: endLongitude},  // Destination
+        origin: { lat: startLatitude, lng: startLongitude },  // Current location
+        destination: { lat: endLatitude, lng: endLongitude },  // Destination
         // Note that Javascript allows us to access the constant
         // using square brackets and a string value as its
         // "property."
         travelMode: google.maps.TravelMode[selectedMode]
-      }, function(response, status) {
+      }, function (response, status) {
         if (status == 'OK') {
           directionsDisplay.setDirections(response);
           infoWindow.close();
@@ -133,29 +133,29 @@ function initAutocomplete() {
   });
 
   // Try HTML5 geolocation.
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function (position) {
-    pos = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude
-    };
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
 
-    infoWindow.setPosition(pos);
-    infoWindow.setContent("Your Location");
-    infoWindow.open(map);
-    map.setCenter(pos);
-    startLatitude = (pos.lat);
-    startLongitude = (pos.lng);
-  }, function () {
-    handleLocationError(true, infoWindow, map.getCenter());
-  });
+      infoWindow.setPosition(pos);
+      infoWindow.setContent("Your Location");
+      infoWindow.open(map);
+      map.setCenter(pos);
+      startLatitude = (pos.lat);
+      startLongitude = (pos.lng);
+    }, function () {
+      handleLocationError(true, infoWindow, map.getCenter());
+    });
 
-}
+  }
 
-else {
-  // Browser doesn’t support Geolocation
-  handleLocationError(false, infoWindow, map.getCenter());
-}
+  else {
+    // Browser doesn’t support Geolocation
+    handleLocationError(false, infoWindow, map.getCenter());
+  }
 }
 
 
@@ -216,7 +216,7 @@ $(document).ready(function () {
         //for (var i = 0; i < response.prices.length; i++) {
 
 
-          console.log("UBER cost: " + response.prices[0].low_estimate);
+        console.log("UBER cost: $" + response.prices[0].low_estimate);
 
         //}
       });
@@ -236,10 +236,12 @@ $(document).ready(function () {
 
       }).then(function (response) {
         // console.log("ETA");
-
+        num1 = response.times[0].estimate;
+        num2 = 60;
+        ETA = parseInt(num1) / num2;
         //Looping through all the ETA objects
         //for (var i = 0; i < response.times.length; i++) {
-          console.log("UBER ETAs: " + response.times[0].estimate);
+        console.log("UBER ETAs: " + ETA + " minutes");
         //}
       });
 
@@ -334,11 +336,11 @@ function rideETA() {
 
   $.ajax(settings).then(function (response) {
     console.log(response);
-    pickupEta = response.eta_estimates[0].eta_seconds;
     //code for pickup ETA
-
-    console.log("LYFT ETA: " + response.eta_estimates[0].eta_seconds);
-
+    num1 = response.eta_estimates[0].eta_seconds;
+    num2 = 60;
+    pickupEta = parseInt(num1) / num2;
+    console.log("LYFT Pickup ETA: " + pickupEta + " minutes");
   });
 
 };
@@ -360,11 +362,13 @@ function costEstimate() {
   }
 
   $.ajax(settings).then(function (response) {
-    console.log(response)
-    costEstimate = response.cost_estimates[0].estimated_cost_cents_min + "-" + response.cost_estimates[0].estimated_cost_cents_max;
+    console.log(response);
+    num1 = response.cost_estimates[0].estimated_cost_cents_min;
+    num2 = 100;
+    costEstimate = parseInt(num1) / num2;
     //code for cost estimate range
 
-    console.log("LYFT cost: " + response.cost_estimates[0].estimated_cost_cents_min);
+    console.log("LYFT cost: $" + costEstimate);
 
 
   });
